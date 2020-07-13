@@ -4,7 +4,7 @@ require 'json'
 class RedmineOauthController < AccountController
   def oauth
     if Setting.plugin_redmine_omniauth_client['oauth_authentification']
-      session[:back_url] = params[:back_url]
+      session[:back_url] = settings['redirect_url']
       redirect_to oauth_client.auth_code.authorize_url(:redirect_uri => oauth_callback_url)
     else
       password_authentication
@@ -29,7 +29,7 @@ class RedmineOauthController < AccountController
   end
 
   def try_to_login info
-   params[:back_url] = session[:back_url]
+   params[:back_url] = settings['redirect_url']
    session.delete(:back_url)
    user = User.find_by_login(info[settings['field_username']])
     if user.nil?
